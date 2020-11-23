@@ -6,8 +6,8 @@ import torch
 import torch.nn as nn
 
 from utils.datasets import letterbox
-from utils.general import non_max_suppression, make_divisible, scale_coords
-
+from utils.general import non_max_suppression,non_max_suppression_with_wbf, make_divisible, scale_coords
+from ensemble_boxes import *
 
 def autopad(k, p=None):  # kernel, padding
     # Pad to 'same'
@@ -169,7 +169,7 @@ class autoShape(nn.Module):
 
         # Inference
         x = self.model(x, augment, profile)  # forward
-        x = non_max_suppression(x[0], conf_thres=self.conf, iou_thres=self.iou, classes=self.classes)  # NMS
+        x = non_max_suppression_with wbf(x[0], conf_thres=self.conf, iou_thres=self.iou, classes=self.classes, wbf = True)  # NMS
 
         # Post-process
         for i in batch:

@@ -80,6 +80,31 @@ class SPP(nn.Module):
         x = self.cv1(x)
         return self.cv2(torch.cat([x] + [m(x) for m in self.m], 1))
 
+class WeightedMean(torch.nn.Module):
+    def __init__(self, no_of_inputs, dimension=1, epsilon=1e-4):
+        super(WeightedMean,self).__init__()
+        self.weights = torch.nn.Parameter(torch.rand(no_of_inputs))
+        self.epsilon = epsilon
+        self.act = torch.nn.LeakyReLU(0.1)# inplace=True)
+
+    def forward(self, x):
+        x = torch.sum(torch.stack([self.weights[i].clamp(0,1)*x[i] for i in range(len(self.weights))]), 0)
+        x /= (torch.sum(self.weights.clamp(0,1) + self.epsilon))
+        return self.act(x)
+
+
+
+class SeparableConv2d(nn.Module):
+    def __init__(self, c1, c2, k=1, s=1, p=0, dilation=1, bias=False):
+        super(SeparableConv2d,self).__init__()
+
+        self.c1 = nn.Conv2d(c1, c1, k, s, p, dilation, groups=c1, bias=bias)
+        self.c2 = nn.Conv2d(c1, c2, 1, 1, 0, 1, 1, bias=bias)
+
+    def forward(self,x):
+        return self.c2(self.c1(x))
+            
+
 
 class Focus(nn.Module):
     # Focus wh information into c-space

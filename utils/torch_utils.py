@@ -12,6 +12,18 @@ import torchvision
 
 logger = logging.getLogger(__name__)
 
+@contextmanager
+def torch_distributed_zero_first(local_rank: int):
+    """
+    Decorator to make all processes in distributed training wait for each local_master to do something.
+    """
+    if local_rank not in [-1, 0]:
+        torch.distributed.barrier()
+    yield
+    if local_rank == 0:
+        torch.distributed.barrier()
+
+
 
 def init_torch_seeds(seed=0):
     torch.manual_seed(seed)

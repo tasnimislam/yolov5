@@ -12,7 +12,7 @@ import torchvision
 
 logger = logging.getLogger(__name__)
 
-@contextmanager
+
 def torch_distributed_zero_first(local_rank: int):
     """
     Decorator to make all processes in distributed training wait for each local_master to do something.

@@ -13,7 +13,7 @@ import torch.distributed as dist
 import torch.nn.functional as F
 import torch.optim as optim
 import torch.optim.lr_scheduler as lr_scheduler
-import torch.optim.torch.optim.AdamW as AdamW
+import torch.optim.AdamW as AdamW
 import torch.utils.data
 import yaml
 from torch.cuda import amp

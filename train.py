@@ -13,6 +13,7 @@ import torch.distributed as dist
 import torch.nn.functional as F
 import torch.optim as optim
 import torch.optim.lr_scheduler as lr_scheduler
+import torch.optim.torch.optim.AdamW as AdamW
 import torch.utils.data
 import yaml
 from torch.cuda import amp
@@ -115,7 +116,7 @@ def train(hyp, opt, device, tb_writer=None):
     # Scheduler https://arxiv.org/pdf/1812.01187.pdf
     # https://pytorch.org/docs/stable/_modules/torch/optim/lr_scheduler.html#OneCycleLR
     lf = lambda x: ((1 + math.cos(x * math.pi / epochs)) / 2) * (1 - hyp['lrf']) + hyp['lrf']  # cosine
-    scheduler = lr_scheduler.LambdaLR(optimizer, lr_lambda=lf)
+    scheduler = AdamW(params, lr=hyp["lr0"], betas=(0.9, 0.999), eps=1e-08, weight_decay=hyp['weight_decay'], amsgrad=False)
     # plot_lr_scheduler(optimizer, scheduler, epochs)
 
     # Resume
